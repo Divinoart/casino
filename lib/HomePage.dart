@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -15,6 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final RemoteConfig remoteConfig = RemoteConfig.instance;
   String _name, _email;
   var token;
   bool _isLoading = true;
@@ -62,7 +64,7 @@ class _HomePageState extends State<HomePage> {
         child: Stack(
           children: [
             WebView(
-              initialUrl: 'https://newsmarch.club/',
+              initialUrl: remoteConfig.getValue('url').asString(),
               javascriptMode: JavascriptMode.unrestricted,
               onPageStarted: (String url) {
                 print('Page started loading: $url');

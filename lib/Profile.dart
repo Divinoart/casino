@@ -1,5 +1,6 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +11,7 @@ class UserProfile extends StatefulWidget {
 
 
 class _UserProfileState extends State<UserProfile> {
+  final RemoteConfig remoteConfig = RemoteConfig.instance;
   String _name, _email;
 
   @override
@@ -126,11 +128,11 @@ class _UserProfileState extends State<UserProfile> {
                     onTap: () {},
                     dense: true,
                     title: Text(
-                      "Full Name",
+                      "Current Version",
                       style: Theme.of(context).textTheme.bodyText2,
                     ),
                     trailing: Text(
-                      "",
+                      remoteConfig.getValue('title').asString(),
                       style: TextStyle(),
                     ),
                   ),
@@ -138,11 +140,11 @@ class _UserProfileState extends State<UserProfile> {
                     onTap: () {},
                     dense: true,
                     title: Text(
-                      "email",
+                      "links",
                       style: Theme.of(context).textTheme.bodyText2,
                     ),
                     trailing: Text(
-                      "" ,
+                      remoteConfig.getValue('url').asString(),
                       style: TextStyle(color: Colors.grey),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -153,15 +155,15 @@ class _UserProfileState extends State<UserProfile> {
                     onTap: () {},
                     dense: true,
                     title: Text(
-                      "Verification",
+                      "Version",
                       style: Theme.of(context).textTheme.bodyText2,
                     ),
-                    // trailing: Text(
-                    //   ((_verified != null) ? _verified? "Verified":"Not Verified"  : '' ) ,
-                    //   style: TextStyle(color: Colors.grey),
-                    //   maxLines: 1,
-                    //   overflow: TextOverflow.ellipsis,
-                    // ),
+                    trailing: Text(
+                      "1.0.3" ,
+                      style: TextStyle(color: Colors.grey),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
 
                   ),
                 ],

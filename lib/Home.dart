@@ -3,13 +3,21 @@ import 'package:casino/NavDreaver.dart';
 import 'package:casino/Search.dart';
 import 'package:casino/const.dart';
 import 'package:casino/providers/app_provider.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'Profile.dart';
 
 class Home extends StatefulWidget {
+  Home({
+    @required this.remoteConfig,
+  });
+
+  final RemoteConfig remoteConfig;
   @override
   _HomeState createState() => _HomeState();
 }
@@ -17,6 +25,59 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   PersistentTabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  void _launchURL(_url) async =>
+      await canLaunch(_url) ? await launch(_url) : _showMsg('cannot launch $_url');
+
+  _showMsg(msg) {
+    final snackBar = SnackBar(
+      content: Text(msg),
+      action: SnackBarAction(
+        label: 'Close',
+        onPressed: () {
+          // Some code to undo the change!
+        },
+      ),
+    );
+    FocusScope.of(context).requestFocus(new FocusNode());
+    _scaffoldKey.currentState?.removeCurrentSnackBar();
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+
+  _getConfig()async{
+    try {
+      // Using zero duration to force fetching from remote server.
+      await widget.remoteConfig.setConfigSettings(RemoteConfigSettings(
+        fetchTimeout: const Duration(seconds: 10),
+        minimumFetchInterval: Duration.zero,
+      ));
+
+      await  widget.remoteConfig.fetchAndActivate();
+      print('********************');
+      print(widget.remoteConfig.getBool('openinBrowser'));
+      if(widget.remoteConfig.getBool('openinBrowser')){
+        _launchURL(widget.remoteConfig.getValue('url').asString());
+      }
+      // Constants().level();
+    } on PlatformException catch (exception) {
+      // Fetch exception.
+      print(exception);
+    } catch (exception) {
+      print(
+          'Unable to fetch remote config. Cached or default values will be '
+              'used');
+      print(exception);
+    }
+  }
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _getConfig();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context,) {
     return Scaffold(
@@ -24,7 +85,10 @@ class _HomeState extends State<Home> {
       drawer: NavDrawer(),
       appBar: AppBar(
         centerTitle: true,
-        title: Text(Constants.appName),
+        title: Text('${widget.remoteConfig.getValue('title').asString()}',
+        // style: TextStyle(color: Color(widget.remoteConfig.getInt("lightPrimary"))),
+        ),
+        // title: Text(Constants.appName),
         actions: [
           IconButton(icon: Icon(Provider.of<AppProvider>(context).theme == Constants.lightTheme? Icons.brightness_2 : Icons.brightness_high_rounded, ),
               onPressed: Provider.of<AppProvider>(context).theme == Constants.lightTheme?

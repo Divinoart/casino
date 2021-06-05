@@ -1,15 +1,25 @@
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 class Constants{
+  final RemoteConfig remoteConfig = RemoteConfig.instance;
+  static int colorCode = 0xfffcfcff;
+
+  level() {
+    colorCode = remoteConfig.getInt("lightPrimary");
+    print(colorCode);
+    print(0xfffcfcff);
+  }
 
   static String appName = "Casino";
 
   //Colors for theme
 //  Color(0xfffcfcff);
-  static Color lightPrimary = Color(0xfffcfcff);
+//   static Color li = remoteConfig.getInt("key");
+  static Color lightPrimary = Color(colorCode);
   static Color darkPrimary = Colors.black;
   static Color lightAccent = Colors.red;
   static Color darkAccent = Colors.red;
-  static Color lightBG = Color(0xfffcfcff);
+  static Color lightBG = Color(colorCode);
   static Color darkBG = Colors.black;
   static Color ratingBG = Colors.yellow[600];
 
