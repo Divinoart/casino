@@ -1,22 +1,42 @@
 import 'package:casino/Home.dart';
 import 'package:casino/const.dart';
 import 'package:casino/providers/app_provider.dart';
+import 'package:casino/screen/InitialPage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
+
+
+main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AppProvider()),
-      ],
-      child: MyApp(),
-    ),
-  );
+  initializeDateFormatting().then((_){
+    runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => AppProvider()),
+        ],
+        child: MyApp(),
+      ),
+    );
+  });
+
 }
+
+
+// void main() {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   runApp(
+//     MultiProvider(
+//       providers: [
+//         ChangeNotifierProvider(create: (_) => AppProvider()),
+//       ],
+//       child: MyApp(),
+//     ),
+//   );
+// }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -35,7 +55,9 @@ class MyApp extends StatelessWidget {
             future: setupRemoteConfig(),
             builder: (BuildContext context, AsyncSnapshot<RemoteConfig> snapshot) {
               return snapshot.hasData
-                  ? Home(remoteConfig: snapshot.requireData)
+                  ?
+              InitialPage(remoteConfig: snapshot.requireData)
+              // Home(remoteConfig: snapshot.requireData)
                   : Scaffold();
             },
           )

@@ -10,7 +10,7 @@ class Constants{
     print(0xfffcfcff);
   }
 
-  static String appName = "Casino";
+  static String appName = "kashflow";
 
   //Colors for theme
 //  Color(0xfffcfcff);
